@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //// PERSPECTIVES DISTRIBUTED RUNTIME
 ////////////////////////////////////////////////////////////////////////////////
-import { authenticate, resetAccount } from 'perspectives-core';
+import { authenticate, resetAccount, isUserLoggedIn } from 'perspectives-core';
 
 ////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
@@ -75,6 +75,11 @@ function handleClientRequest( request )
     switch (req.proxyRequest)
     {
       case "isUserLoggedIn":
+        //{proxyRequest: "isUserLoggedIn", channelId: proxy.channelId}
+        InternalChannelPromise.then( function () 
+          {
+            channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "isUserLoggedIn", isUserLoggedIn: true});
+          });
         break;
       case "authenticate":
         authenticate(req.username)(req.password)(req.host)(req.port)
