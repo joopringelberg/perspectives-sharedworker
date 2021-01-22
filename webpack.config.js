@@ -1,12 +1,22 @@
 const path = require("path");
 
 module.exports = {
-  entry: path.join(__dirname, "src/serviceworker.js" ),
+  // entry: path.join(__dirname, "src/serviceworker.js" ),
+  entry: {
+    sharedWorker: "./src/shared.js",
+    serviceWorker: "./src/service.js"
+  },
+  // output: {
+  //   library: "perspectives-workers",
+  //   libraryTarget: "umd",
+  //   filename: "perspectives-serviceworker.js",
+  //   path: path.join(__dirname, "dist")
+  // },
   output: {
-    library: "perspectives-serviceworker",
-    libraryTarget: "umd",
-    filename: "perspectives-serviceworker.js",
-    path: path.join(__dirname, "dist")
+    library: 'perspectives-[name]',
+    filename: 'perspectives-[name].js',
+    path: path.join(__dirname, "dist"),
+    libraryTarget: "umd"
   },
   watch: false,
   mode: "development",
