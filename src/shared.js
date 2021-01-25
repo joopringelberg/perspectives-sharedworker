@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //// PERSPECTIVES DISTRIBUTED RUNTIME
 ////////////////////////////////////////////////////////////////////////////////
-import { authenticate, resetAccount, isUserLoggedIn } from 'perspectives-core';
+import { authenticate, resetAccount } from 'perspectives-core';
 
 ////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
@@ -29,16 +29,19 @@ import { authenticate, resetAccount, isUserLoggedIn } from 'perspectives-core';
 import {InternalChannelPromise} from "perspectives-proxy";
 
 ////////////////////////////////////////////////////////////////////////////////
-//// RECEIVE PORTS FROM CLIENTS
+//// STORING PORTS SENT BY CLIENT PAGES
 ////////////////////////////////////////////////////////////////////////////////
 const channels = {};
 let channelIndex = 1;
 
-// self.onmessage = function(e)
-
-// For SharedWorker:
+////////////////////////////////////////////////////////////////////////////////
+//// RECEIVE PORTS FROM CLIENTS WHEN RUN AS SHAREDWORKER
+//// So this code is run in a shared worker.
+////////////////////////////////////////////////////////////////////////////////
+// onconnect is specific for SharedWorkers: https://developer.mozilla.org/en-US/docs/Web/API/SharedWorkerGlobalScope/connect_event
 self.onconnect = function(e)
 {
+  // the new client (page) sends a port.
   channels[ channelIndex ] = e.ports[0];
   // Return the channelIndex.
   e.ports[0].postMessage( {serviceWorkerMessage: "channelId", channelId: 1000000 * channelIndex });
@@ -46,20 +49,6 @@ self.onconnect = function(e)
   // start listening to the new channel, handle requests.
   e.ports[0].onmessage = handleClientRequest;
 };
-
-// For ServiceWorker:
-// self.onmessage = function(e)
-// {
-//   if (e.data == "porttransfer")
-//   {
-//     channels[ channelIndex ] = e.ports[0];
-//     // Return the channelIndex.
-//     e.ports[0].postMessage( {serviceWorkerMessage: "channelId", channelId: 1000000 * channelIndex });
-//     channelIndex = channelIndex + 1;
-//     // start listening to the new channel, handle requests.
-//     e.ports[0].onmessage = handleClientRequest;
-//   }
-// };
 
 ////////////////////////////////////////////////////////////////////////////////
 //// HANDLE REQUESTS COMING IN THROUGH CHANNELS FROM CLIENTS
@@ -76,7 +65,7 @@ function handleClientRequest( request )
     {
       case "isUserLoggedIn":
         //{proxyRequest: "isUserLoggedIn", channelId: proxy.channelId}
-        InternalChannelPromise.then( function () 
+        InternalChannelPromise.then( function ()
           {
             channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "isUserLoggedIn", isUserLoggedIn: true});
           });
@@ -131,6 +120,3 @@ function corrId2ChannelId (corrId)
 {
   return Math.floor(corrId / 1000000);
 }
-////////////////////////////////////////////////////////////////////////////////
-//// HANDLE RESPONSES COMING IN FROM THE PERSPECTIVES DISTRIBUTED RUNTIME ON THE INTERNAL CHANNEL
-////////////////////////////////////////////////////////////////////////////////
