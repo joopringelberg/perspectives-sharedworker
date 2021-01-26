@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    sharedWorker: "./src/shared.js",
+    sharedworker: "./src/shared.js",
   },
   output: {
     library: 'perspectives-[name]',
