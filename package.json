@@ -25,6 +25,7 @@
   "dependencies": {
     "perspectives-core": "git+https://github.com/joopringelberg/perspectives-core.git#v0.10.0",
     "perspectives-proxy": "git+https://github.com/joopringelberg/perspectives-proxy.git#v1.8.0"
+
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
