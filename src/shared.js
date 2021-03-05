@@ -80,25 +80,27 @@ function handleClientRequest( request )
               };
             })(); // The core resetAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
-      case "runPDR":
-        // runPDR :: UserName -> Password -> PouchdbUser -> Url -> Effect Unit
-        try
-          {
-            runPDR( req.username) (req.password) (req.pouchdbuser) (req.publicrepo)
-            (function() // (Unit -> Effect Unit)
+        case "runPDR":
+          // runPDR :: UserName -> Password -> PouchdbUser -> Url -> Effect Unit
+          try
             {
-              return function() // This function is the result of the call to runPDR: the Effect.
-              {
-                return {};
-              };
-            });
-          }
-          catch (e)
-          {
-            // Return the error message to the client.
-            channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "runPDR", error: e });
-          }
-        break;
+              runPDR( req.username) (req.password) (req.pouchdbuser) (req.publicrepo)
+                (function(success) // (Boolean -> Effect Unit), the callback.
+                {
+                  return function() // This function is the Effect that is returned.
+                  {
+                    channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "runPDR", startSuccesful: success });
+                    return {};
+                  };
+                })();
+              break;
+            }
+            catch (e)
+            {
+              // Return the error message to the client.
+              channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "runPDR", error: e });
+            }
+          break;
       case "close":
         InternalChannelPromise.then( ic => ic.close() );
         break;
