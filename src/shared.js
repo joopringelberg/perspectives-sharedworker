@@ -71,7 +71,7 @@ function handleClientRequest( request )
           });
         break;
       case "resetAccount":
-        resetAccount(req.username)(req.password)(req.host)(req.port)(req.publicrepo)
+        resetAccount( req.username) (req.password) (req.pouchdbuser) (req.publicrepo)
           (function(success) // (Boolean -> Effect Unit)
             {
               return function() //  This function is the result of the call to resetAccount: the Effect.
