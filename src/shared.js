@@ -59,6 +59,13 @@ self.onconnect = function(e)
 function handleClientRequest( request )
 {
   const req = request.data;
+  let pdrResolver, pdrRejecter;
+  const pdrStarted = new Promise(function( resolver, rejecter)
+    {
+      pdrResolver = resolver;
+      pdrRejecter = rejecter;
+    }
+    );
   if (req.proxyRequest)
   {
     switch (req.proxyRequest)
@@ -67,7 +74,10 @@ function handleClientRequest( request )
         //{proxyRequest: "isUserLoggedIn", channelId: proxy.channelId}
         InternalChannelPromise.then( function ()
           {
-            channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "isUserLoggedIn", isUserLoggedIn: true});
+            // We return true because the sharedworker is active.
+            pdrStarted
+              .then(() => channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "isUserLoggedIn", isUserLoggedIn: true}))
+              .catch(() => channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "isUserLoggedIn", isUserLoggedIn: false}))
           });
         break;
       case "resetAccount":
@@ -99,6 +109,14 @@ function handleClientRequest( request )
               {
                 return function() // This function is the Effect that is returned.
                 {
+                  if (success)
+                  {
+                    pdrResolver(true);
+                  }
+                  else
+                  {
+                    pdrRejecter(false);
+                  }
                   channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "runPDR", startSuccesful: success });
                   return {};
                 };
