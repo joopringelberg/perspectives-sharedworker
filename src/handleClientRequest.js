@@ -36,19 +36,20 @@ function corrId2ChannelId (corrId)
 ////////////////////////////////////////////////////////////////////////////////
 //// HANDLE REQUESTS COMING IN THROUGH CHANNELS FROM CLIENTS
 ////////////////////////////////////////////////////////////////////////////////
+let pdrResolver, pdrRejecter;
+const pdrStarted = new Promise(function( resolver, rejecter)
+  {
+    pdrResolver = resolver;
+    pdrRejecter = rejecter;
+  }
+  );
+
 // These calls are implemented in accordance with the types of the functions in the core.
 // The callbacks are declared as Effects, there, hence we treat them here that way.
 // We could cheat and provide callbacks that do not return an Effect.
 export default function handleClientRequest( channels, request )
 {
   const req = request.data;
-  let pdrResolver, pdrRejecter;
-  const pdrStarted = new Promise(function( resolver, rejecter)
-    {
-      pdrResolver = resolver;
-      pdrRejecter = rejecter;
-    }
-    );
   if (req.proxyRequest)
   {
     switch (req.proxyRequest)
