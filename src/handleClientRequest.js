@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //// PERSPECTIVES DISTRIBUTED RUNTIME
 ////////////////////////////////////////////////////////////////////////////////
-import { resetAccount, runPDR, createAccount, removeAccount } from 'perspectives-core';
+import { resetAccount, recompileBasicModels, runPDR, createAccount, removeAccount } from 'perspectives-core';
 
 ////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
@@ -74,6 +74,17 @@ export default function handleClientRequest( channels, request )
                 channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "resetAccount", resetSuccesful: success });
               };
             })(); // The core resetAccount function results in an Effect, hence we apply it to return the (boolean) result.
+        break;
+      case "recompileBasicModels":
+        recompileBasicModels(req.pouchdbuser) (req.publicrepo)
+          // eslint-disable-next-line no-unexpected-multiline
+          (function(success) // (Boolean -> Effect Unit)
+            {
+              return function() //  This function is the result of the call to recompileBasicModels: the Effect.
+              {
+                channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "recompileBasicModels", recompileSuccesful: success });
+              };
+            })(); // The core recompileBasicModels function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "createAccount":
         createAccount( req.username) (req.pouchdbuser) (req.publicrepo)
