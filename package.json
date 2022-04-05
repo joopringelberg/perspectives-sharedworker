@@ -1,6 +1,6 @@
 {
   "name": "perspectives-sharedworker",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Shared worker shell for Perspectives Distributed Runtime (PDR)",
   "main": "dist/perspectives-sharedworker.js",
   "scripts": {
@@ -23,8 +23,8 @@
   },
   "homepage": "https://github.com/joopringelberg/perspectives-sharedworker#readme",
   "dependencies": {
-    "perspectives-core": "git+https://github.com/joopringelberg/perspectives-core.git#v0.16.0",
-    "perspectives-proxy": "git+https://github.com/joopringelberg/perspectives-proxy.git#v1.12.0"
+    "perspectives-core": "git+https://github.com/joopringelberg/perspectives-core.git#v0.17.0",
+    "perspectives-proxy": "git+https://github.com/joopringelberg/perspectives-proxy.git#v1.13.0"
 
   },
   "devDependencies": {
