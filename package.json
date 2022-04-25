@@ -23,9 +23,8 @@
   },
   "homepage": "https://github.com/joopringelberg/perspectives-sharedworker#readme",
   "dependencies": {
-    "perspectives-core": "git+https://github.com/joopringelberg/perspectives-core.git#v0.17.0",
+    "perspectives-core": "git+https://github.com/joopringelberg/perspectives-core.git#v0.17.1",
     "perspectives-proxy": "git+https://github.com/joopringelberg/perspectives-proxy.git#v1.13.0"
-
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
