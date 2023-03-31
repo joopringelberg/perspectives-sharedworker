@@ -26,6 +26,10 @@ import { resetAccount, recompileBasicModels, runPDR, createAccount, removeAccoun
 ////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
 ////////////////////////////////////////////////////////////////////////////////
+// `InternalChannelPromise` is a promise that resolves to an InternalChannel that has been configured by the PDR
+// with three Purescript functions that allow it (the channel) to function as a Purescript Emitter.
+// It emits client requests to the core, so it connects the SharedWorker to the PDR.
+// This function is called as a consequence of the evaluation of the function setupApi in the Main module of the PDR.
 import {InternalChannelPromise} from "perspectives-proxy";
 
 function corrId2ChannelId (corrId)
@@ -47,11 +51,15 @@ const pdrStarted = new Promise(function( resolver, rejecter)
 // These calls are implemented in accordance with the types of the functions in the core.
 // The callbacks are declared as Effects, there, hence we treat them here that way.
 // We could cheat and provide callbacks that do not return an Effect.
+// NOTE that requests are received through the Channel Messaging API calls from clients. 
+// `handleClientRequest` deals with them by using the InternalChannel's send function, 
+// that has been connectec by the PDR with the stream of requests the PerspectivesAPI handles.
 export default function handleClientRequest( channels, request )
 {
   const req = request.data;
   if (req.proxyRequest)
   {
+    // The request can be handled right here in the SharedWorker itself.
     switch (req.proxyRequest)
     {
       case "isUserLoggedIn":
@@ -148,9 +156,10 @@ export default function handleClientRequest( channels, request )
   }
   else
   {
-    // The callback was saved in the ServiceWorkerChannel.
+    // The request represents a call to the PDR.
+    // The original client callback was saved in the SharedWorkerChannel (on the other side, i.e. the client side) and associated with the corrId.
     // Replace the callback with a function that passes on the response to the right channel.
-    // The ServiceWorkerChannel will apply the callback.
+    // The SharedWorkerChannel will apply the original client callback.
     req.reactStateSetter = function( result )
       {
         return function()
@@ -158,6 +167,7 @@ export default function handleClientRequest( channels, request )
           channels[corrId2ChannelId(result.corrId)].postMessage( result );
         };
       };
+    // Now call the PDR.
     InternalChannelPromise.then( ic => ic.send( req ) );
   }
 }
