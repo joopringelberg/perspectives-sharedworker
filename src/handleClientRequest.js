@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //// PERSPECTIVES DISTRIBUTED RUNTIME
 ////////////////////////////////////////////////////////////////////////////////
-import { resetAccount, recompileBasicModels, runPDR, createAccount, removeAccount } from 'perspectives-core';
+import { resetAccount, recompileLocalModels, runPDR, createAccount, removeAccount } from 'perspectives-core';
 
 ////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
@@ -73,7 +73,7 @@ export default function handleClientRequest( channels, request )
           });
         break;
       case "resetAccount":
-        resetAccount( req.username) (req.pouchdbuser) (req.publicrepo)
+        resetAccount( req.username) (req.pouchdbuser) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -83,19 +83,19 @@ export default function handleClientRequest( channels, request )
               };
             })(); // The core resetAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
-      case "recompileBasicModels":
-        recompileBasicModels(req.pouchdbuser) (req.publicrepo)
+      case "recompileLocalModels":
+        recompileLocalModels(req.pouchdbuser) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
-              return function() //  This function is the result of the call to recompileBasicModels: the Effect.
+              return function() //  This function is the result of the call to recompileLocalModels: the Effect.
               {
-                channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "recompileBasicModels", recompileSuccesful: success });
+                channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "recompileLocalModels", recompileSuccesful: success });
               };
-            })(); // The core recompileBasicModels function results in an Effect, hence we apply it to return the (boolean) result.
+            })(); // The core recompileLocalModels function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "createAccount":
-        createAccount( req.username) (req.pouchdbuser) (req.publicrepo)
+        createAccount( req.username) (req.pouchdbuser) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -106,7 +106,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core createAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "removeAccount":
-        removeAccount( req.username) (req.pouchdbuser) (req.publicrepo)
+        removeAccount( req.username) (req.pouchdbuser) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -120,7 +120,7 @@ export default function handleClientRequest( channels, request )
         // runPDR :: UserName -> Password -> PouchdbUser -> Url -> Effect Unit
         try
           {
-            runPDR( req.username) (req.pouchdbuser) (req.publicrepo)
+            runPDR( req.username) (req.pouchdbuser)
               // eslint-disable-next-line no-unexpected-multiline
               (function(success) // (Boolean -> Effect Unit), the callback.
               {
