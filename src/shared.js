@@ -23,6 +23,7 @@ import handleClientRequest from "./handleClientRequest.js";
 ////////////////////////////////////////////////////////////////////////////////
 //// STORING PORTS SENT BY CLIENT PAGES
 ////////////////////////////////////////////////////////////////////////////////
+// channels is an array of MessagePort objects. See: https://developer.mozilla.org/en-US/docs/Web/API/MessagePort
 const channels = {};
 let channelIndex = 1;
 
@@ -33,7 +34,7 @@ let channelIndex = 1;
 // onconnect is specific for SharedWorkers: https://developer.mozilla.org/en-US/docs/Web/API/SharedWorkerGlobalScope/connect_event
 self.onconnect = function(e)
 {
-  // the new client (page) sends a port.
+  // the new client (page) sends a port. ports is an array of MessagePort objects.
   channels[ channelIndex ] = e.ports[0];
   // Return the channelIndex.
   e.ports[0].postMessage( {serviceWorkerMessage: "channelId", channelId: 1000000 * channelIndex });

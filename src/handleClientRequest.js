@@ -53,7 +53,8 @@ const pdrStarted = new Promise(function( resolver, rejecter)
 // We could cheat and provide callbacks that do not return an Effect.
 // NOTE that requests are received through the Channel Messaging API calls from clients. 
 // `handleClientRequest` deals with them by using the InternalChannel's send function, 
-// that has been connectec by the PDR with the stream of requests the PerspectivesAPI handles.
+// that has been connected by the PDR with the stream of requests the PerspectivesAPI handles.
+// channels is an array of MessagePort objects. See: https://developer.mozilla.org/en-US/docs/Web/API/MessagePort
 export default function handleClientRequest( channels, request )
 {
   const req = request.data;
