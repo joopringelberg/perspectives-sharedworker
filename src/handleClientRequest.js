@@ -41,6 +41,7 @@ function corrId2ChannelId (corrId)
 //// HANDLE REQUESTS COMING IN THROUGH CHANNELS FROM CLIENTS
 ////////////////////////////////////////////////////////////////////////////////
 let pdrResolver, pdrRejecter;
+let pdrStartedIsResolved = false;
 const pdrStarted = new Promise(function( resolver, rejecter)
   {
     pdrResolver = resolver;
@@ -63,6 +64,10 @@ export default function handleClientRequest( channels, request )
     // The request can be handled right here in the SharedWorker itself.
     switch (req.proxyRequest)
     {
+      case "pdrStarted":
+        // This will always return an answer: it is not dependent on whether the PDR has actually been started.
+        channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "pdrStarted", pdrStarted: pdrStartedIsResolved});
+        break;
       case "isUserLoggedIn":
         //{proxyRequest: "isUserLoggedIn", channelId: proxy.channelId}
         InternalChannelPromise.then( function ()
@@ -96,7 +101,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core recompileLocalModels function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "createAccount":
-        createAccount( req.username) (req.pouchdbuser) 
+        createAccount( req.username) (req.pouchdbuser) (req.runtimeOptions)
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -129,6 +134,7 @@ export default function handleClientRequest( channels, request )
                 {
                   if (success)
                   {
+                    pdrStartedIsResolved = true;
                     pdrResolver(true);
                   }
                   else
