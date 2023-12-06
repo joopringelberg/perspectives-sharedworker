@@ -12,24 +12,25 @@ module.exports = {
     libraryTarget: "umd"
   },
   watch: false,
-  mode: "development",
+  mode: "production",
   target: "webworker",
-  module: {
-    rules: [{
-        test: /.js?$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: "babel-loader",
-            options: {
-              presets: [
-                '@babel/preset-env'
-              ]
-            }
-          }
-        ]
-      }]
-  },
+  // module: {
+  //   rules: [{
+  //       test: /.js?$/,
+  //       // exclude: /node_modules/,
+  //       include: path.resolve(__dirname, "src"),
+  //       use: [
+  //         {
+  //           loader: "babel-loader",
+  //           options: {
+  //             presets: [
+  //               '@babel/preset-env'
+  //             ]
+  //           }
+  //         }
+  //       ]
+  //     }]
+  // },
   externals: {
     // These are Affjax dependencies when running on node.
     "xhr2-cookies": {
