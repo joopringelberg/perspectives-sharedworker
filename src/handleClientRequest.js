@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //// PERSPECTIVES DISTRIBUTED RUNTIME
 ////////////////////////////////////////////////////////////////////////////////
-import { resetAccount, recompileLocalModels, runPDR, createAccount, removeAccount } from 'perspectives-core';
+import { resetAccount, recompileLocalModels, runPDR, createAccount, removeAccount, reCreateInstances } from 'perspectives-core';
 
 ////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
@@ -88,6 +88,17 @@ export default function handleClientRequest( channels, request )
                 channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "resetAccount", resetSuccesful: success });
               };
             })(); // The core resetAccount function results in an Effect, hence we apply it to return the (boolean) result.
+        break;
+      case "reCreateInstances":
+        reCreateInstances (req.pouchdbuser) 
+          // eslint-disable-next-line no-unexpected-multiline
+          (function(success) // (Boolean -> Effect Unit)
+            {
+              return function() //  This function is the result of the call to reCreateInstances: the Effect.
+              {
+                channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "reCreateInstances", reCreateSuccesful: success });
+              };
+            })(); // The core reCreateInstances function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "recompileLocalModels":
         recompileLocalModels(req.pouchdbuser) 
