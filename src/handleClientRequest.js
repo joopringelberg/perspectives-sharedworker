@@ -79,7 +79,7 @@ export default function handleClientRequest( channels, request )
           });
         break;
       case "resetAccount":
-        resetAccount( req.username) (req.pouchdbuser) 
+        resetAccount( req.username) (req.pouchdbuser) (req.options)
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -90,7 +90,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core resetAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "reCreateInstances":
-        reCreateInstances (req.pouchdbuser) 
+        reCreateInstances (req.pouchdbuser) (req.options) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -134,10 +134,10 @@ export default function handleClientRequest( channels, request )
             })(); // The core removeAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "runPDR":
-        // runPDR :: UserName -> Password -> PouchdbUser -> Url -> Effect Unit
+        // runPDR :: UserName -> PouchdbUser RuntimeOptions -> Effect Unit
         try
           {
-            runPDR( req.username) (req.pouchdbuser)
+            runPDR( req.username) (req.pouchdbuser) (req.options)
               // eslint-disable-next-line no-unexpected-multiline
               (function(success) // (Boolean -> Effect Unit), the callback.
               {
