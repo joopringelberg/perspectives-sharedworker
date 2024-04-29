@@ -12,7 +12,7 @@ module.exports = {
     libraryTarget: "umd"
   },
   watch: false,
-  mode: "production",
+  mode: "development",
   target: "webworker",
   // module: {
   //   rules: [{

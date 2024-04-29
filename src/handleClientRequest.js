@@ -112,7 +112,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core recompileLocalModels function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "createAccount":
-        createAccount( req.username) (req.pouchdbuser) (req.runtimeOptions)
+        createAccount( req.username) (req.pouchdbuser) (req.runtimeOptions) (req.identityDocument)
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
