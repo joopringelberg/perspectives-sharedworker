@@ -114,11 +114,11 @@ export default function handleClientRequest( channels, request )
       case "createAccount":
         createAccount( req.username) (req.pouchdbuser) (req.runtimeOptions) (req.identityDocument)
           // eslint-disable-next-line no-unexpected-multiline
-          (function(success) // (Boolean -> Effect Unit)
+          (function({success, reason}) // ({success :: Boolean, reason :: Nullable String} -> Effect Unit)
             {
               return function() //  This function is the result of the call to createAccount: the Effect.
               {
-                channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "createAccount", createSuccesful: success });
+                channels[corrId2ChannelId(req.channelId)].postMessage({serviceWorkerMessage: "createAccount", createSuccesful: {success, reason} });
               };
             })(); // The core createAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
