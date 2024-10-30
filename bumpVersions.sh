@@ -5,8 +5,8 @@
 # * createPerspectivesLinks.sh
 # * package.json
 
-PERSPECTIVESPROXY=v1.21.1
-PERSPECTIVESCORE=v0.26.2
+PERSPECTIVESPROXY=v1.21.4
+PERSPECTIVESCORE=v0.26.5
 
 sed "s/PERSPECTIVESPROXY/${PERSPECTIVESPROXY}/g;\
 s/PERSPECTIVESCORE/${PERSPECTIVESCORE}/g;" package.template.json > package.json
