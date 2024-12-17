@@ -1,4 +1,5 @@
 const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -14,30 +15,21 @@ module.exports = {
   watch: false,
   mode: "development",
   target: "webworker",
-  // module: {
-  //   rules: [{
-  //       test: /.js?$/,
-  //       // exclude: /node_modules/,
-  //       include: path.resolve(__dirname, "src"),
-  //       use: [
-  //         {
-  //           loader: "babel-loader",
-  //           options: {
-  //             presets: [
-  //               '@babel/preset-env'
-  //             ]
-  //           }
-  //         }
-  //       ]
-  //     }]
-  // },
+  plugins: [
+    new CleanWebpackPlugin(), // Plugin to clear out the output directory
+  ],
   externals: {
-    // These are Affjax dependencies when running on node.
-    "xhr2-cookies": {
-      commonjs: "xhr2-cookies",
-      commonjs2: "xhr2-cookies",
-      amd: "xhr2-cookies",
-      root: "xhr2-cookies"
+    "perspectives-core": {
+      commonjs: "perspectives-core",
+      commonjs2: "perspectives-core",
+      amd: "perspectives-core",
+      root: "perspectivesCore"
+    },
+    "perspectives-proxy": {
+      amd: "perspectives-proxy",
+      commonjs: "perspectives-proxy",
+      commonjs2: "perspectives-proxy",
+      root: "perspectives-proxy"
     },
     "url": {
       commonjs: "url",

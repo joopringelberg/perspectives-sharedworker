@@ -21,7 +21,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //// PERSPECTIVES DISTRIBUTED RUNTIME
 ////////////////////////////////////////////////////////////////////////////////
-import { resetAccount, recompileLocalModels, runPDR, createAccount, removeAccount, reCreateInstances } from 'perspectives-core';
+importScripts('./perspectives-core.js');
+
+const { resetAccount, recompileLocalModels, runPDR, createAccount, removeAccount, reCreateInstances, internalChannelPromise } = self["perspectives-core"];
 
 ////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
@@ -30,7 +32,7 @@ import { resetAccount, recompileLocalModels, runPDR, createAccount, removeAccoun
 // with three Purescript functions that allow it (the channel) to function as a Purescript Emitter.
 // It emits client requests to the core, so it connects the SharedWorker to the PDR.
 // This function is called as a consequence of the evaluation of the function setupApi in the Main module of the PDR.
-import {InternalChannelPromise} from "perspectives-proxy";
+const InternalChannelPromise = internalChannelPromise;
 
 function corrId2ChannelId (corrId)
 {
