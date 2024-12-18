@@ -19,20 +19,12 @@
 // END LICENSE
 
 ////////////////////////////////////////////////////////////////////////////////
-//// PERSPECTIVES DISTRIBUTED RUNTIME
-////////////////////////////////////////////////////////////////////////////////
-importScripts('./perspectives-core.js');
-
-const { resetAccount, recompileLocalModels, runPDR, createAccount, removeAccount, reCreateInstances, internalChannelPromise } = self["perspectives-core"];
-
-////////////////////////////////////////////////////////////////////////////////
 //// INTERNAL CHANNEL
 ////////////////////////////////////////////////////////////////////////////////
-// `InternalChannelPromise` is a promise that resolves to an InternalChannel that has been configured by the PDR
+// `internalChannelPromise` is a promise that resolves to an InternalChannel that has been configured by the PDR
 // with three Purescript functions that allow it (the channel) to function as a Purescript Emitter.
 // It emits client requests to the core, so it connects the SharedWorker to the PDR.
 // This function is called as a consequence of the evaluation of the function setupApi in the Main module of the PDR.
-const InternalChannelPromise = internalChannelPromise;
 
 function corrId2ChannelId (corrId)
 {
@@ -58,7 +50,7 @@ const pdrStarted = new Promise(function( resolver, rejecter)
 // `handleClientRequest` deals with them by using the InternalChannel's send function, 
 // that has been connected by the PDR with the stream of requests the PerspectivesAPI handles.
 // channels is an array of MessagePort objects. See: https://developer.mozilla.org/en-US/docs/Web/API/MessagePort
-export default function handleClientRequest( channels, request )
+export default function handleClientRequest( pdr, channels, request )
 {
   const req = request.data;
   if (req.proxyRequest)
@@ -72,7 +64,7 @@ export default function handleClientRequest( channels, request )
         break;
       case "isUserLoggedIn":
         //{proxyRequest: "isUserLoggedIn", channelId: proxy.channelId}
-        InternalChannelPromise.then( function ()
+        pdr.internalChannelPromise.then( function ()
           {
             // We return true because the sharedworker is active.
             pdrStarted
@@ -81,7 +73,7 @@ export default function handleClientRequest( channels, request )
           });
         break;
       case "resetAccount":
-        resetAccount( req.username) (req.pouchdbuser) (req.options)
+        pdr.resetAccount( req.username) (req.pouchdbuser) (req.options)
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -92,7 +84,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core resetAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "reCreateInstances":
-        reCreateInstances (req.pouchdbuser) (req.options) 
+        pdr.reCreateInstances (req.pouchdbuser) (req.options) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -103,7 +95,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core reCreateInstances function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "recompileLocalModels":
-        recompileLocalModels(req.pouchdbuser) 
+        pdr.recompileLocalModels(req.pouchdbuser) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -114,7 +106,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core recompileLocalModels function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "createAccount":
-        createAccount( req.username) (req.pouchdbuser) (req.runtimeOptions) (req.identityDocument)
+        pdr.createAccount( req.username) (req.pouchdbuser) (req.runtimeOptions) (req.identityDocument)
           // eslint-disable-next-line no-unexpected-multiline
           (function({success, reason}) // ({success :: Boolean, reason :: Nullable String} -> Effect Unit)
             {
@@ -125,7 +117,7 @@ export default function handleClientRequest( channels, request )
             })(); // The core createAccount function results in an Effect, hence we apply it to return the (boolean) result.
         break;
       case "removeAccount":
-        removeAccount( req.username) (req.pouchdbuser) 
+        pdr.removeAccount( req.username) (req.pouchdbuser) 
           // eslint-disable-next-line no-unexpected-multiline
           (function(success) // (Boolean -> Effect Unit)
             {
@@ -139,7 +131,7 @@ export default function handleClientRequest( channels, request )
         // runPDR :: UserName -> PouchdbUser RuntimeOptions -> Effect Unit
         try
           {
-            runPDR( req.username) (req.pouchdbuser) (req.options)
+            pdr.runPDR( req.username) (req.pouchdbuser) (req.options)
               // eslint-disable-next-line no-unexpected-multiline
               (function(success) // (Boolean -> Effect Unit), the callback.
               {
@@ -167,10 +159,10 @@ export default function handleClientRequest( channels, request )
           }
         break;
       case "close":
-        InternalChannelPromise.then( ic => ic.close() );
+        pdr.internalChannelPromise.then( ic => ic.close() );
         break;
       case "unsubscribe":
-        InternalChannelPromise.then( ic => ic.unsubscribe( req.request ) );
+        pdr.internalChannelPromise.then( ic => ic.unsubscribe( req.request ) );
         break;
     }
   }
@@ -188,6 +180,6 @@ export default function handleClientRequest( channels, request )
         };
       };
     // Now call the PDR.
-    InternalChannelPromise.then( ic => ic.send( req ) );
+    pdr.internalChannelPromise.then( ic => ic.send( req ) );
   }
 }

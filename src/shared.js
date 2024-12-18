@@ -18,6 +18,11 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
+////////////////////////////////////////////////////////////////////////////////
+//// PERSPECTIVES DISTRIBUTED RUNTIME
+////////////////////////////////////////////////////////////////////////////////
+importScripts('./perspectives-core.js');
+
 import handleClientRequest from "./handleClientRequest.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,5 +45,5 @@ self.onconnect = function(e)
   e.ports[0].postMessage( {serviceWorkerMessage: "channelId", channelId: 1000000 * channelIndex });
   channelIndex = channelIndex + 1;
   // start listening to the new channel, handle requests.
-  e.ports[0].onmessage = request => handleClientRequest(channels, request);
+  e.ports[0].onmessage = request => handleClientRequest( self["perspectives-core"], channels, request);
 };
