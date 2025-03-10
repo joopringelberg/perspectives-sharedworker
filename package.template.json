@@ -22,10 +22,6 @@
     "url": "https://github.com/joopringelberg/perspectives-sharedworker/issues"
   },
   "homepage": "https://github.com/joopringelberg/perspectives-sharedworker#readme",
-  "dependencies": {
-    "perspectives-core": "git+https://github.com/joopringelberg/perspectives-core.git#PERSPECTIVESCORE",
-    "perspectives-proxy": "git+https://github.com/joopringelberg/perspectives-proxy.git#PERSPECTIVESPROXY"
-  },
   "devDependencies": {
     "@babel/cli": "^7.25.7",
     "@babel/core": "^7.25.8",

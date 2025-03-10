@@ -21,16 +21,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 //// PERSPECTIVES DISTRIBUTED RUNTIME
 ////////////////////////////////////////////////////////////////////////////////
-importScripts('./perspectives-core.js');
-
-import handleClientRequest from "./handleClientRequest.js";
+import * as pdr from 'perspectives-core';
 
 ////////////////////////////////////////////////////////////////////////////////
 //// STORING PORTS SENT BY CLIENT PAGES
 ////////////////////////////////////////////////////////////////////////////////
-// channels is an array of MessagePort objects. See: https://developer.mozilla.org/en-US/docs/Web/API/MessagePort
-const channels = {};
-let channelIndex = 1;
+// subscribingPages is an array of MessagePort objects. See: https://developer.mozilla.org/en-US/docs/Web/API/MessagePort
+const subscribingPages = {};
+let pageIndex = 1;
 
 ////////////////////////////////////////////////////////////////////////////////
 //// RECEIVE PORTS FROM CLIENTS WHEN RUN AS SHAREDWORKER
@@ -39,11 +37,13 @@ let channelIndex = 1;
 // onconnect is specific for SharedWorkers: https://developer.mozilla.org/en-US/docs/Web/API/SharedWorkerGlobalScope/connect_event
 self.onconnect = function(e)
 {
-  // the new client (page) sends a port. ports is an array of MessagePort objects.
-  channels[ channelIndex ] = e.ports[0];
-  // Return the channelIndex.
-  e.ports[0].postMessage( {serviceWorkerMessage: "channelId", channelId: 1000000 * channelIndex });
-  channelIndex = channelIndex + 1;
-  // start listening to the new channel, handle requests.
-  e.ports[0].onmessage = request => handleClientRequest( self["perspectives-core"], channels, request);
+  const connectionToAPage = e.ports[0];
+  // the new subscribing page sends a port. subscribingPages is an array of MessagePort objects.
+  subscribingPages[ pageIndex ] = connectionToAPage;
+  // Return the page its index.
+  connectionToAPage.postMessage( {responseType: "WorkerResponse", serviceWorkerMessage: "channelId", channelId: 1000000 * pageIndex });
+  // increment the index so we're ready for the next page that connects.
+  pageIndex = pageIndex + 1;
+  // start listening to the new page, handle requests.
+  connectionToAPage.onmessage = requestFromPage => pdr.handleClientRequest( pdr, subscribingPages, requestFromPage);
 };

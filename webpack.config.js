@@ -1,16 +1,20 @@
-const path = require("path");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-module.exports = {
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+
+export default {
   entry: {
-    sharedworker: "./src/shared.js",
-    handleclientrequest: "./src/handleClientRequest.js"
+    sharedworker: "./src/perspectives-sharedworker.js"
   },
   output: {
-    library: 'perspectives-[name]',
-    filename: 'perspectives-[name].js',
-    path: path.join(__dirname, "dist"),
-    libraryTarget: "umd"
+    library: {
+      type: "module",
+    },
+    filename: 'perspectives-sharedworker.js',
+    path: new URL("dist", import.meta.url).pathname,
+    chunkFormat: "module",
+  },
+  experiments: {
+    outputModule: true
   },
   watch: false,
   mode: "development",
@@ -19,23 +23,6 @@ module.exports = {
     new CleanWebpackPlugin(), // Plugin to clear out the output directory
   ],
   externals: {
-    "perspectives-core": {
-      commonjs: "perspectives-core",
-      commonjs2: "perspectives-core",
-      amd: "perspectives-core",
-      root: "perspectivesCore"
-    },
-    "perspectives-proxy": {
-      amd: "perspectives-proxy",
-      commonjs: "perspectives-proxy",
-      commonjs2: "perspectives-proxy",
-      root: "perspectives-proxy"
-    },
-    "url": {
-      commonjs: "url",
-      commonjs2: "url",
-      amd: "url",
-      root: "url"
-    }
+    "perspectives-core": "perspectives-core"
   }
 };
